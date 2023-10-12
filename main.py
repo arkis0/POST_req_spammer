@@ -18,20 +18,17 @@ def generate_random_data():
 num_requests = 0
 
 def do_request():
-    global num_requests
-    while not keyboard.is_pressed("q"):
-        data = generate_random_data()
-        try:
-            response = requests.post(url, data=data).text
-            if len(response) <= 100:
-                print(response + "\n")
-            num_requests += 1
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}. \n Time-outed by website. Sleeping for 10 seconds and then retrying...")
-            time.sleep(10)
+    data = generate_random_data()
+    try:
+        response = requests.post(url, data=data).text
+        if len(response) <= 100:
+            print(response + "\n")
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}. \n Time-outed by website. Sleeping for 10 seconds and then retrying...")
+        time.sleep(10)
 
 threads = []
-
+    
 while True:
     cpu_percent = psutil.cpu_percent()
     if cpu_percent < 50:
