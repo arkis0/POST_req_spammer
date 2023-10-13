@@ -2,7 +2,7 @@
 **Program made to quickly flood database used by website with GET and POST requests.**
 Consider that many web services may block your IP adress or filter that traffic.
 
-`Coming soon: add variable in case php reading is in same site and checks if button was pressed`
+`Coming soon: New functionality in case php POST is in same file and it checks if button was pressed`
 
 *This program is provided for educational purposes only. The author does not endorse or encourage the use of this program for any unauthorized, unethical, or malicious activity. The program is intended to be used as a learning tool to understand the workings of software applications and network systems.*
 
