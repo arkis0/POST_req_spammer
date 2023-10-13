@@ -1,1 +1,2 @@
-# POST_req_spammer
+# Web request spammer
+easily flood database with GET or POST requests
