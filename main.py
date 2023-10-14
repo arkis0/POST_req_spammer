@@ -4,6 +4,7 @@ import time
 import urllib.parse
 import random
 field_names = 'null'
+requests_sent = 0
 
 def post_generate_random_data():
     return {
@@ -16,7 +17,7 @@ def do_post_request():
     try:
         response = requests.post(url, data=data).text
         if len(response) <= 400:
-            print(response + "\n")
+            print(f"[{requests_sent}]{response}. \n")
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}. \n Time-outed by website. Sleeping for 10 seconds and then retrying...")
         time.sleep(10)
@@ -32,12 +33,15 @@ def do_get_request():
     try:
         response = requests.get(new_url).text
         if len(response) <= 400:
-            print(response + "\n")
+            print(f"[{requests_sent}]{response}. \n")
+        elif len(response) > 400:
+            print(f"[{requests_sent}]Response too long. \n")
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}. \n Time-outed by website. Sleeping for 10 seconds and then retrying...")
         time.sleep(10)
 
 def run_post_method():
+    global requests_sent
     while True:
         threads = []
         for i in range(num_threads):
@@ -48,8 +52,9 @@ def run_post_method():
             threads[i].start()
         for i in range(num_threads):
             threads[i].join()
-            
+        requests_sent += num_threads
 def run_get_method():
+    global requests_sent
     while True:
         threads = []
         for i in range(num_threads):
@@ -60,7 +65,7 @@ def run_get_method():
             threads[i].start()
         for i in range(num_threads):
             threads[i].join()
-
+        requests_sent += num_threads
 
 chosen_method = input("Enter the method to use (GET or POST): ")
 if chosen_method == "POST" or chosen_method == "post":
@@ -71,7 +76,7 @@ if chosen_method == "POST" or chosen_method == "post":
 elif chosen_method == "GET" or chosen_method == "get":
     url = input("Enter the URL to send requests to: ")
     parsed_url = urllib.parse.urlparse(url)
-    num_threads = int(input("Enter the number of threads to use: "))
+    num_threads = int(input("Enter the number of threads to use(suggested 50): "))
     run_get_method()
 else:
     print("Invalid method. Exiting...")
