@@ -1,4 +1,4 @@
-# Web request spammer
+# Traffic Storm - Web request spammer
 **Program made to quickly flood database used by website with GET and POST requests.**
 Consider that many web services may block your IP adress or filter that traffic.
 
