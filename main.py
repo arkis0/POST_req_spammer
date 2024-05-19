@@ -4,36 +4,17 @@ import time
 import urllib.parse
 import random
 
-field_names = 'null'
 requests_sent = 0
-print('''
-
-████████╗██████╗  █████╗ ███████╗███████╗██╗ ██████╗    ███████╗████████╗ ██████╗ ██████╗ ███╗   ███╗
-╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██╔════╝██║██╔════╝    ██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗████╗ ████║
-   ██║   ██████╔╝███████║█████╗  █████╗  ██║██║         ███████╗   ██║   ██║   ██║██████╔╝██╔████╔██║
-   ██║   ██╔══██╗██╔══██║██╔══╝  ██╔══╝  ██║██║         ╚════██║   ██║   ██║   ██║██╔══██╗██║╚██╔╝██║
-   ██║   ██║  ██║██║  ██║██║     ██║     ██║╚██████╗    ███████║   ██║   ╚██████╔╝██║  ██║██║ ╚═╝ ██║
-   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝     ╚═╝ ╚═════╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝
-                                                                                                v2.0 by @arkis0
-''')
 
 def post_generate_random_data():
-    data = {
-        field_name.strip(): str(random.randint(1, 1000))
-        for field_name in field_names
-    }
-    if fixed_params is not None:
-        for name, value in fixed_params.items():
-            data[name] = value
+    data = {name: value for name, value in fixed_params.items()}
+    data.update({name: str(random.randint(1, 1000)) for name in random_params})
     return data
 
 def get_generate_random_data():
     query_params = urllib.parse.parse_qs(parsed_url.query)
-    for key in query_params:
-        query_params[key] = [str(random.randint(1, 1000))]
-    if fixed_params is not None:
-        for name, value in fixed_params.items():
-            query_params[name] = [value]
+    query_params.update({name: [str(random.randint(1, 1000))] for name in random_params})
+    query_params.update({name: [value] for name, value in fixed_params.items()})
     new_query_string = urllib.parse.urlencode(query_params, doseq=True)
     new_url = urllib.parse.urlunparse((parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, new_query_string, parsed_url.fragment))
     return new_url
@@ -91,37 +72,24 @@ def run_get_method():
         requests_sent += num_threads
 
 chosen_method = input("Enter the method to use (GET or POST): ")
-if chosen_method == "POST" or chosen_method == "post":
+num_threads = int(input("Enter the number of threads to use (suggested 50): "))
+
+fixed_params = {}
+while True:
+    param_name = input("Enter fixed parameter name (press enter to stop): ")
+    if not param_name:
+        break
+    param_value = input("Enter fixed parameter value: ")
+    fixed_params[param_name] = param_value
+
+random_params = input("Enter the random parameter names, separate them by commas: ").split(",")
+
+if chosen_method.lower() == "post":
     url = input("Enter the URL to send POST requests to: ")
-    field_names = input("Enter the field names that will send random data, separate them by commas: ").split(",")
-    num_threads = int(input("Enter the number of threads to use (suggested 50): "))
-    fixed_params_code = input("Do you want to add fixed parameters that will not change? (y/n): ")
-    if fixed_params_code.lower() == "y":
-        fixed_params = {}
-        while True:
-            param_name = input("Enter parameter name (press enter to stop): ")
-            if not param_name:
-                break
-            param_value = input("Enter parameter value: ")
-            fixed_params[param_name] = param_value
-    else:
-        fixed_params = None
     run_post_method()
-elif chosen_method == "GET" or chosen_method == "get":
+elif chosen_method.lower() == "get":
     url = input("Enter the URL to send GET requests to: ")
     parsed_url = urllib.parse.urlparse(url)
-    num_threads = int(input("Enter the number of threads to use (suggested 50): "))
-    fixed_params_code = input("Do you want to add fixed parameters that will not change? (y/n): ")
-    if fixed_params_code.lower() == "y":
-        fixed_params = {}
-        while True:
-            param_name = input("Enter parameter name (press enter to stop): ")
-            if not param_name:
-                break
-            param_value = input("Enter parameter value: ")
-            fixed_params[param_name] = param_value
-    else:
-        fixed_params = None
     run_get_method()
 else:
     input("Invalid method. Press any button to exit.")
